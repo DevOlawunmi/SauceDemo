@@ -1,4 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test'
 import { BasePage } from './BasePage';
 import { HeaderComponent } from './components/HeaderComponent';
 
@@ -31,18 +32,27 @@ export class InventoryPage extends BasePage {
     await this.page.goto('/inventory.html');
   }
 
+  
   /** Scopes to a single product card so actions cannot hit the wrong item. */
   card(productName: string): Locator {
     return this.items.filter({ has: this.page.getByText(productName, { exact: true }) });
   }
 
-  async addToCart(productName: string): Promise<void> {
-    await this.card(productName).getByRole('button', { name: 'Add to cart' }).click();
-  }
+  /** Sauce Labs Backpack -> sauce-labs-backpack */
+private static slug(productName: string): string {
+  return productName.toLowerCase().replace(/\s+/g, '-');
+}
 
-  async removeFromCart(productName: string): Promise<void> {
-    await this.card(productName).getByRole('button', { name: 'Remove' }).click();
-  }
+async addToCart(productName: string): Promise<void> {
+  const slug = InventoryPage.slug(productName);
+  await this.page.locator(`[data-test="add-to-cart-${slug}"]`).click();
+  await expect(this.page.locator(`[data-test="remove-${slug}"]`)).toBeVisible();
+}
+
+async removeFromCart(productName: string): Promise<void> {
+  const slug = InventoryPage.slug(productName);
+  await this.page.locator(`[data-test="remove-${slug}"]`).click();
+}
 
   async openProduct(productName: string): Promise<void> {
     await this.itemNames.filter({ hasText: productName }).first().click();
