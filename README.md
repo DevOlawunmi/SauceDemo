@@ -123,7 +123,6 @@ The login page passes the same scan cleanly.
 - **Data-driven login** across all six published accounts, table-driven from `users.ts`.
 - **Product detail page coverage** — navigating in from the catalogue, adding from the detail page, and the back-to-products path.
 - **Cross-cutting checks** — no console errors during the happy path, and no failed network requests, asserted in an `afterEach`.
-- **Lint and format** with ESLint (`eslint-plugin-playwright`) and Prettier, wired into CI and a pre-commit hook.
 - **Reporting.** The built-in HTML reporter is sufficient at this size and is already uploaded as a CI artifact. On a larger suite I would move to Allure for run history and failure categorisation, and shard across CI jobs with merged blob reports once wall-clock runtime justifies the coordination cost.
 - **Test data isolation.** Sauce Demo is a shared public sandbox with a fixed catalogue; against a real environment I would seed and tear down data per test rather than relying on fixed fixtures.
 
