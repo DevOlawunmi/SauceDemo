@@ -1,0 +1,25 @@
+{
+  "name": "saucedemo-playwright",
+  "version": "1.0.0",
+  "description": "End-to-end test suite for saucedemo.com built with Playwright and TypeScript",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "lint:tests": "playwright test --list"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  },
+  
+  "engines": {
+  "node": ">=20"
+}
+}
