@@ -31,7 +31,8 @@ npm run report            # open the HTML report from the last run
 npm run typecheck         # tsc --noEmit, no browsers required
 ```
 
-Every run writes an HTML report to `playwright-report/`, including traces, screenshots and video for any failure. Open it with `npm run report` — the terminal output is only a summary, and the report is where you can step through a failing test.
+Every run writes an HTML report to `playwright-report/`, including traces, screenshots and video for any failure. Open it with `npm run report` — the terminal output is only a summary, and the report is where you can step through a failing test. 
+Raw per-test artifacts — traces, screenshots and video — are written to test-results/. Both directories are gitignored.
 
 Run one file, or one test by name:
 
@@ -96,6 +97,8 @@ The site is a storefront, so coverage follows the revenue path — a defect anyw
 
 **Accessibility is gated, not absolute.** The scan fails the build on critical and serious violations only; minor and moderate findings are reported but do not block. A gate nobody can keep green gets deleted, so the threshold is set where the failures are worth acting on. Rules already known to fail are listed in `KNOWN_VIOLATIONS` in `src/utils/accessibility.ts` with a reason against each, so the suite catches new regressions rather than re-reporting accepted issues. Failures print the rule, the affected selectors and a link to the fix rather than an array diff.
 
+**No API tests, and that is deliberate.** Sauce Demo has no back end — authentication validates against users hardcoded in the JavaScript bundle, and cart state lives in browser storage. There are no endpoints to exercise, so rather than invent or mock them, network.spec.ts verifies the HTTP layer that genuinely exists. Against a real application I would assert that an order actually persisted server-side, not only that the confirmation page rendered
+
 **CI.** `.github/workflows/playwright.yml` runs the type check and the full suite on every push and pull request, uploading the HTML report as an artifact. Retries are enabled on CI only — locally a flake should be visible, not hidden.
 
 ## Findings
@@ -123,9 +126,9 @@ The login page passes the same scan cleanly.
 - **Data-driven login** across all six published accounts, table-driven from `users.ts`.
 - **Product detail page coverage** — navigating in from the catalogue, adding from the detail page, and the back-to-products path.
 - **Cross-cutting checks** — no console errors during the happy path, and no failed network requests, asserted in an `afterEach`.
-- **Lint and format** with ESLint (`eslint-plugin-playwright`) and Prettier, wired into CI and a pre-commit hook.
 - **Reporting.** The built-in HTML reporter is sufficient at this size and is already uploaded as a CI artifact. On a larger suite I would move to Allure for run history and failure categorisation, and shard across CI jobs with merged blob reports once wall-clock runtime justifies the coordination cost.
 - **Test data isolation.** Sauce Demo is a shared public sandbox with a fixed catalogue; against a real environment I would seed and tear down data per test rather than relying on fixed fixtures.
+- **Security testing.** On a real application with a back end I'll cover authorisation between user roles, session fixation and input validation at the API boundary 
 
 ## Known constraints
 
